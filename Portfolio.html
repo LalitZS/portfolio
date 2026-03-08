@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lalit R. Verma | iOS Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-void:#02010a;--bg-deep:#060416;--bg-card:#110f24;
+    --purple-deep:#1a0a3d;--purple-mid:#3d1f8a;--purple-bright:#6b35d4;--purple-glow:#9b59f5;
+    --gold:#f0b429;--gold-dim:#a07820;--silver-dim:#6e7dbf;
+    --text-bright:#e8e0ff;--text-mid:#9b8fcc;--text-dim:#5a5282;
+    --border-glow:rgba(107,53,212,.4);--border-gold:rgba(240,180,41,.4);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg-void);color:var(--text-bright);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg-void)}
+  ::-webkit-scrollbar-thumb{background:var(--purple-bright);border-radius:2px}
+
+  .cursor-dot{width:8px;height:8px;background:var(--purple-glow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--purple-glow),0 0 20px var(--purple-glow)}
+  .cursor-ring{width:30px;height:30px;border:1px solid var(--purple-glow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:all .15s ease;opacity:.7}
+  #particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+  .scan-line{position:fixed;left:0;right:0;height:2px;pointer-events:none;z-index:0;background:linear-gradient(90deg,transparent,rgba(107,53,212,.2),transparent);animation:scan 10s linear infinite}
+  @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+  .scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:10001;background:linear-gradient(90deg,var(--purple-bright),var(--purple-glow),var(--gold));transform-origin:left;transform:scaleX(0);box-shadow:0 0 8px var(--purple-glow)}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(2,1,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glow)}
+  .nav-logo{font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--gold);text-shadow:0 0 20px var(--gold);letter-spacing:2px;text-decoration:none}
+  .nav-logo span{color:var(--purple-glow)}
+  .nav-links{display:flex;gap:1.5rem;list-style:none}
+  .nav-links a{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--silver-dim);text-decoration:none;letter-spacing:2px;text-transform:uppercase;transition:all .3s;position:relative}
+  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--purple-glow);transition:width .3s;box-shadow:0 0 8px var(--purple-glow)}
+  .nav-links a:hover{color:var(--purple-glow)}
+  .nav-links a:hover::after{width:100%}
+  .nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+  .nav-toggle span{display:block;width:24px;height:2px;background:var(--purple-glow)}
+  .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(2,1,10,.98);padding:1.5rem;border-bottom:1px solid var(--border-glow);z-index:999;flex-direction:column;gap:1rem}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--silver-dim);text-decoration:none;letter-spacing:3px;text-transform:uppercase;padding:.5rem 0;border-bottom:1px solid var(--border-glow);transition:color .3s}
+  .mobile-menu a:hover{color:var(--purple-glow)}
+
+  /* LAYOUT */
+  section{position:relative;z-index:1}
+  .section-wrapper{max-width:1200px;margin:0 auto;padding:6rem 2rem}
+  .section-tag{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:1rem}
+  .section-tag::before{content:'';width:40px;height:1px;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+  .section-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:700;color:var(--text-bright);margin-bottom:.5rem;text-shadow:0 0 30px rgba(107,53,212,.4)}
+  .section-title span{color:var(--purple-glow)}
+  .section-divider{width:60px;height:2px;background:linear-gradient(90deg,var(--purple-bright),var(--gold));margin:1.5rem 0 3rem;box-shadow:0 0 10px var(--purple-glow)}
+  .glow-divider{height:1px;background:linear-gradient(90deg,transparent,var(--purple-bright),var(--gold),var(--purple-bright),transparent);opacity:.3}
+
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(40px);transition:all .7s cubic-bezier(.4,0,.2,1)}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .r1{transition-delay:.1s}.r2{transition-delay:.2s}.r3{transition-delay:.3s}
+
+  /* BUTTONS */
+  .btn-p{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 2rem;background:linear-gradient(135deg,var(--purple-bright),var(--purple-mid));border:1px solid var(--purple-glow);color:#fff;font-family:'Rajdhani',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);box-shadow:0 0 20px rgba(107,53,212,.3)}
+  .btn-p:hover{background:linear-gradient(135deg,var(--purple-glow),var(--purple-bright));box-shadow:0 0 40px rgba(107,53,212,.6);transform:translateY(-2px)}
+  .btn-s{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 2rem;background:transparent;border:1px solid var(--border-gold);color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:.88rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%)}
+  .btn-s:hover{background:rgba(240,180,41,.1);box-shadow:0 0 30px rgba(240,180,41,.3);transform:translateY(-2px)}
+
+  /* HERO */
+  #hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(107,53,212,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(30,58,138,.14) 0%,transparent 60%)}
+  .hero-rank{font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:1.5rem;text-shadow:0 0 20px var(--gold);animation:fadeInDown 1s ease forwards}
+  .hero-rank::before{content:'[ '}
+  .hero-rank::after{content:' ]'}
+  .hero-name{font-family:'Cinzel Decorative',serif;font-size:clamp(2.2rem,7vw,5.5rem);font-weight:900;line-height:1.1;background:linear-gradient(135deg,#fff 0%,var(--purple-glow) 40%,var(--gold) 80%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(107,53,212,.5));animation:fadeInUp 1s .3s ease both}
+  .hero-subtitle{font-size:clamp(.95rem,2.5vw,1.25rem);color:var(--silver-dim);letter-spacing:4px;text-transform:uppercase;margin:1rem 0 2rem;font-weight:300;animation:fadeInUp 1s .5s ease both}
+  .hero-subtitle .hl{color:var(--purple-glow);font-weight:600}
+  .hero-desc{max-width:620px;margin:0 auto 3rem;font-size:1rem;line-height:1.9;color:var(--text-mid);animation:fadeInUp 1s .7s ease both}
+  .hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeInUp 1s .9s ease both}
+  .hero-stats{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:4rem;animation:fadeInUp 1s 1.1s ease both}
+  .stat-item{text-align:center}
+  .stat-number{font-family:'Cinzel Decorative',serif;font-size:2rem;font-weight:700;color:var(--purple-glow);text-shadow:0 0 20px var(--purple-glow)}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:4rem;align-items:center}
+  .about-frame{width:100%;aspect-ratio:3/4;background:linear-gradient(135deg,var(--purple-deep),var(--bg-card));border:1px solid var(--border-glow);position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px))}
+  .about-frame::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(107,53,212,.04) 30px,rgba(107,53,212,.04) 31px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(107,53,212,.04) 30px,rgba(107,53,212,.04) 31px)}
+  .about-avatar{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .about-badge{position:absolute;top:16px;right:16px;background:var(--bg-void);border:1px solid var(--gold);padding:.35rem .7rem;font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--gold);text-shadow:0 0 10px var(--gold);letter-spacing:2px}
+  .corner{position:absolute;width:20px;height:20px;border-color:var(--purple-glow);border-style:solid}
+  .corner.tl{top:-1px;left:-1px;border-width:2px 0 0 2px;box-shadow:-3px -3px 10px var(--purple-glow)}
+  .corner.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;box-shadow:3px 3px 10px var(--purple-glow)}
+  .about-content h3{font-family:'Cinzel Decorative',serif;font-size:.95rem;color:var(--gold);margin-bottom:1rem;letter-spacing:2px}
+  .about-content p{color:var(--text-mid);font-size:.98rem;line-height:1.9;margin-bottom:1.1rem}
+  .details-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.8rem}
+  .detail{padding:.75rem;background:var(--bg-card);border:1px solid var(--border-glow);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+  .detail-label{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:2px;color:var(--purple-glow);text-transform:uppercase;margin-bottom:.2rem}
+  .detail-value{font-size:.82rem;color:var(--text-bright);font-weight:600}
+  .sdot{display:inline-block;width:8px;height:8px;background:#10b981;border-radius:50%;margin-right:.4rem;box-shadow:0 0 10px #10b981;animation:sdotpulse 2s infinite}
+  @keyframes sdotpulse{0%,100%{box-shadow:0 0 6px #10b981}50%{box-shadow:0 0 18px #10b981,0 0 30px rgba(16,185,129,.3)}}
+
+  /* SKILLS */
+  .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
+  .skill-card{background:var(--bg-card);border:1px solid var(--border-glow);padding:1.8rem;position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));transition:all .3s}
+  .skill-card:hover{border-color:var(--purple-glow);box-shadow:0 0 30px rgba(107,53,212,.18)}
+  .skill-card-icon{font-size:1.4rem;margin-bottom:.8rem}
+  .skill-card-title{font-family:'Cinzel Decorative',serif;font-size:.75rem;color:var(--gold);letter-spacing:2px;margin-bottom:1.3rem}
+  .skill-rows{display:flex;flex-direction:column;gap:.75rem}
+  .sh{display:flex;justify-content:space-between;margin-bottom:.3rem}
+  .sn{font-size:.82rem;font-weight:600;color:var(--text-bright);letter-spacing:.5px}
+  .sl{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--purple-glow)}
+  .sbar{height:3px;background:rgba(107,53,212,.12);border-radius:2px;overflow:hidden}
+  .sfill{height:100%;background:linear-gradient(90deg,var(--purple-bright),var(--purple-glow));box-shadow:0 0 8px var(--purple-glow);border-radius:2px;width:0%;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:.45rem}
+  .tc{padding:.28rem .75rem;background:rgba(107,53,212,.1);border:1px solid rgba(107,53,212,.28);color:var(--text-bright);font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.5px;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);transition:all .2s}
+  .tc:hover{background:rgba(107,53,212,.22);border-color:var(--purple-glow);color:var(--purple-glow)}
+
+  /* TIMELINE */
+  .timeline{position:relative;padding-left:2rem}
+  .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--purple-bright) 20%,var(--purple-glow) 50%,var(--purple-bright) 80%,transparent);box-shadow:0 0 10px var(--purple-glow)}
+  .tl-item{position:relative;padding:0 0 3rem 2rem}
+  .tl-item::before{content:'';position:absolute;left:-5px;top:5px;width:10px;height:10px;background:var(--purple-glow);border-radius:50%;box-shadow:0 0 15px var(--purple-glow),0 0 28px rgba(107,53,212,.4)}
+  .tl-date{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:.35rem}
+  .tl-role{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--text-bright);margin-bottom:.25rem}
+  .tl-co{font-size:.88rem;color:var(--purple-glow);font-weight:600;letter-spacing:1px;margin-bottom:.9rem}
+  .tl-bullets{list-style:none;display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+  .tl-bullets li{color:var(--text-mid);font-size:.88rem;line-height:1.7;padding-left:1.2rem;position:relative}
+  .tl-bullets li::before{content:'▸';position:absolute;left:0;color:var(--purple-glow)}
+  .tags{display:flex;flex-wrap:wrap;gap:.45rem}
+  .tag{padding:.2rem .75rem;background:rgba(107,53,212,.13);border:1px solid rgba(107,53,212,.28);color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.8px;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%)}
+
+  /* PROJECTS */
+  .proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:1.5rem}
+  .proj-card{background:var(--bg-card);border:1px solid var(--border-glow);overflow:hidden;position:relative;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));transition:all .4s}
+  .proj-card:hover{border-color:var(--purple-glow);box-shadow:0 20px 60px rgba(107,53,212,.2);transform:translateY(-6px)}
+  .proj-card.feat{border-color:var(--gold-dim)}
+  .proj-card.feat:hover{border-color:var(--gold);box-shadow:0 20px 60px rgba(240,180,41,.14)}
+  .proj-head{padding:1.4rem 1.4rem .9rem;background:linear-gradient(135deg,rgba(26,10,61,.7),transparent);border-bottom:1px solid var(--border-glow);display:flex;justify-content:space-between;align-items:flex-start}
+  .proj-type{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:.35rem}
+  .proj-name{font-family:'Cinzel Decorative',serif;font-size:.88rem;color:var(--text-bright);line-height:1.3}
+  .proj-badge{padding:.18rem .6rem;background:rgba(240,180,41,.1);border:1px solid var(--gold-dim);color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:.58rem;white-space:nowrap;align-self:flex-start}
+  .proj-body{padding:1.3rem}
+  .proj-desc{color:var(--text-mid);font-size:.85rem;line-height:1.8;margin-bottom:.7rem}
+  .proj-bullets{list-style:none;margin-bottom:1rem}
+  .proj-bullets li{color:var(--text-mid);font-size:.82rem;line-height:1.7;padding-left:1.1rem;position:relative;margin-bottom:.25rem}
+  .proj-bullets li::before{content:'▸';position:absolute;left:0;color:var(--purple-glow)}
+  .proj-stack{display:flex;flex-wrap:wrap;gap:.35rem}
+  .proj-foot{display:flex;gap:1rem;padding:.9rem 1.3rem;border-top:1px solid var(--border-glow);background:rgba(107,53,212,.03)}
+  .proj-link{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--purple-glow);text-decoration:none;text-transform:uppercase;transition:all .2s}
+  .proj-link:hover{color:var(--gold)}
+
+  /* EDUCATION */
+  .edu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
+  .edu-card{background:var(--bg-card);border:1px solid var(--border-glow);padding:2rem;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);transition:all .3s}
+  .edu-card:hover{border-color:var(--purple-glow);box-shadow:0 0 28px rgba(107,53,212,.15)}
+  .edu-year{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--gold);margin-bottom:.45rem}
+  .edu-degree{font-family:'Cinzel Decorative',serif;font-size:.88rem;color:var(--text-bright);margin-bottom:.35rem;line-height:1.4}
+  .edu-school{font-size:.86rem;color:var(--purple-glow);font-weight:600;margin-bottom:.7rem}
+  .edu-desc{color:var(--text-mid);font-size:.83rem;line-height:1.7}
+  .edu-badge{display:inline-block;margin-top:.9rem;padding:.28rem .75rem;background:rgba(240,180,41,.1);border:1px solid var(--gold-dim);color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:2px}
+
+  /* HIGHLIGHTS */
+  .hi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1.4rem}
+  .hi-card{background:var(--bg-card);border:1px solid var(--border-glow);padding:1.5rem;text-align:center;clip-path:polygon(16px 0%,calc(100% - 16px) 0%,100% 16px,100% calc(100% - 16px),calc(100% - 16px) 100%,16px 100%,0% calc(100% - 16px),0% 16px);transition:all .3s;position:relative;overflow:hidden}
+  .hi-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(240,180,41,.05) 0%,transparent 70%)}
+  .hi-card:hover{border-color:var(--gold-dim);box-shadow:0 0 28px rgba(240,180,41,.1)}
+  .hi-icon{font-size:1.8rem;margin-bottom:.8rem}
+  .hi-title{font-family:'Cinzel Decorative',serif;font-size:.75rem;color:var(--gold);margin-bottom:.45rem;letter-spacing:1px;line-height:1.4}
+  .hi-desc{color:var(--text-mid);font-size:.78rem;line-height:1.6}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:4rem}
+  .ci-title{font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--gold);margin-bottom:.9rem;letter-spacing:2px}
+  .ci-text{color:var(--text-mid);font-size:.93rem;line-height:1.9;margin-bottom:1.8rem}
+  .ci-links{display:flex;flex-direction:column;gap:.75rem}
+  .ci-link{display:flex;align-items:center;gap:.9rem;padding:.85rem 1rem;background:var(--bg-card);border:1px solid var(--border-glow);text-decoration:none;transition:all .3s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+  .ci-link:hover{border-color:var(--purple-glow);box-shadow:0 0 18px rgba(107,53,212,.2)}
+  .ci-icon{font-size:1rem;width:20px;text-align:center}
+  .ci-main{font-size:.88rem;color:var(--text-bright);font-weight:600}
+  .ci-sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text-dim)}
+  .cform{display:flex;flex-direction:column;gap:1.1rem}
+  .fg{display:flex;flex-direction:column;gap:.45rem}
+  .flabel{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:3px;color:var(--purple-glow);text-transform:uppercase}
+  .finput,.ftextarea{background:var(--bg-card);border:1px solid var(--border-glow);color:var(--text-bright);font-family:'Rajdhani',sans-serif;font-size:.93rem;padding:.75rem 1rem;outline:none;transition:all .3s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+  .finput:focus,.ftextarea:focus{border-color:var(--purple-glow);box-shadow:0 0 18px rgba(107,53,212,.14)}
+  .ftextarea{resize:vertical;min-height:110px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .fstatus{padding:.75rem 1rem;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;display:none;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+  .fstatus.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;display:block}
+  .fstatus.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;display:block}
+  .fstatus.wait{background:rgba(107,53,212,.1);border:1px solid var(--border-glow);color:var(--purple-glow);display:block}
+
+  /* FOOTER */
+  footer{position:relative;z-index:1;border-top:1px solid var(--border-glow);padding:2.5rem 2rem;text-align:center;background:var(--bg-deep)}
+  .foot-logo{font-family:'Cinzel Decorative',serif;font-size:1rem;color:var(--gold);text-shadow:0 0 18px var(--gold);margin-bottom:.6rem}
+  .foot-text{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase}
+  .foot-text span{color:var(--purple-glow)}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:2rem}.about-frame{aspect-ratio:16/9;max-height:230px}.contact-grid{grid-template-columns:1fr}}
+  @media(max-width:768px){.nav-links{display:none}.nav-toggle{display:flex}.frow{grid-template-columns:1fr}.details-grid{grid-template-columns:1fr}.proj-grid{grid-template-columns:1fr}.section-wrapper{padding:4rem 1.5rem}}
+  @media(max-width:480px){.hero-name{font-size:2rem}.stat-number{font-size:1.5rem}.hero-cta{flex-direction:column;align-items:center}.hero-stats{gap:1.5rem}}
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+<div class="scan-line"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">LRV<span>.</span>iOS</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#highlights">Highlights</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#skills" onclick="closeMobile()">Skills</a>
+  <a href="#experience" onclick="closeMobile()">Experience</a>
+  <a href="#projects" onclick="closeMobile()">Projects</a>
+  <a href="#education" onclick="closeMobile()">Education</a>
+  <a href="#highlights" onclick="closeMobile()">Highlights</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- ██ HERO ██ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div style="position:relative;z-index:1;width:100%;max-width:900px;margin:0 auto;text-align:center">
+    <p class="hero-rank">iOS Developer · Swift · SwiftUI · UIKit · MVVM</p>
+    <h1 class="hero-name">Lalit R. Verma</h1>
+    <p class="hero-subtitle">Mobile Architect · <span class="hl" id="typedText">Swift Engineer</span></p>
+    <p class="hero-desc">
+      iOS Developer with 4 years of experience building production-grade mobile applications.
+      From fintech and healthcare to automotive and streaming — crafting scalable apps
+      with Swift, SwiftUI, real-time MQTT systems, and clean MVVM architecture.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-p">⬡ View Projects</a>
+      <a href="#contact" class="btn-s">⬡ Hire Me</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-number" data-count="4" data-suffix="+">0</div><div class="stat-label">Years Exp.</div></div>
+      <div class="stat-item"><div class="stat-number" data-count="10" data-suffix="+">0</div><div class="stat-label">Apps Shipped</div></div>
+      <div class="stat-item"><div class="stat-number" data-count="4" data-suffix="">0</div><div class="stat-label">Domains</div></div>
+      <div class="stat-item"><div class="stat-number" data-count="9" data-suffix=".54">0</div><div class="stat-label">CGPA</div></div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ ABOUT ██ -->
+<section id="about">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Origin Story</div>
+    <h2 class="section-title reveal">About <span>Me</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="about-grid">
+      <div style="position:relative" class="reveal">
+        <div class="about-frame">
+          <div class="about-avatar">
+            <img src="assets/img.jpeg" alt="Lalit R. Verma" style="width:100%; height:100%; object-fit:cover; object-position:center top; display:block;">
+          </div>
+          <div class="about-badge">iOS Dev</div>
+        </div>
+        <div class="corner tl"></div><div class="corner br"></div>
+      </div>
+      <div class="about-content reveal r1">
+        <h3>▶ The Developer Behind the Code</h3>
+        <p>iOS Developer at <span style="color:var(--purple-glow);font-weight:600">MB Infoways, Ahmedabad</span> with 4 years of professional experience building production-ready mobile applications using Swift, SwiftUI, and UIKit.</p>
+        <p>I've delivered apps across <span style="color:var(--gold)">fintech, healthcare, streaming, and automotive</span> sectors — designing scalable MVVM-C architectures, integrating real-time MQTT data streams, managing in-app purchases and subscriptions, and writing clean, maintainable Swift code.</p>
+        <p><span class="sdot"></span><span style="color:var(--gold)">Currently open</span> to exciting iOS opportunities and mobile development challenges.</p>
+        <div class="details-grid">
+          <div class="detail"><div class="detail-label">Name</div><div class="detail-value">Lalit R. Verma</div></div>
+          <div class="detail"><div class="detail-label">Role</div><div class="detail-value" style="color:var(--gold)">iOS Developer</div></div>
+          <div class="detail"><div class="detail-label">Company</div><div class="detail-value">MB Infoways</div></div>
+          <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Ahmedabad, India</div></div>
+          <div class="detail"><div class="detail-label">Email</div><div class="detail-value" style="font-size:.72rem">lalitverma3313@gmail.com</div></div>
+          <div class="detail"><div class="detail-label">Phone</div><div class="detail-value">+91-8160818138</div></div>
+          <div class="detail"><div class="detail-label">GitHub</div><div class="detail-value" style="font-size:.72rem">github.com/LalitZS</div></div>
+          <div class="detail"><div class="detail-label">Status</div><div class="detail-value" style="color:#10b981">Open to Work</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ SKILLS ██ -->
+<section id="skills" style="background:rgba(6,4,22,.5)">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Developer Arsenal</div>
+    <h2 class="section-title reveal">Technical <span>Skills</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">📱</div>
+        <div class="skill-card-title">iOS Development</div>
+        <div class="skill-rows">
+          <div><div class="sh"><span class="sn">SwiftUI</span><span class="sl">90%</span></div><div class="sbar"><div class="sfill" data-width="90"></div></div></div>
+          <div><div class="sh"><span class="sn">UIKit</span><span class="sl">93%</span></div><div class="sbar"><div class="sfill" data-width="93"></div></div></div>
+          <div><div class="sh"><span class="sn">CoreData / SQLite</span><span class="sl">85%</span></div><div class="sbar"><div class="sfill" data-width="85"></div></div></div>
+          <div><div class="sh"><span class="sn">AVFoundation</span><span class="sl">80%</span></div><div class="sbar"><div class="sfill" data-width="80"></div></div></div>
+          <div><div class="sh"><span class="sn">Push Notifications &amp; IAP</span><span class="sl">88%</span></div><div class="sbar"><div class="sfill" data-width="88"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-card reveal r1">
+        <div class="skill-card-icon">⚡</div>
+        <div class="skill-card-title">Languages &amp; Architecture</div>
+        <div class="skill-rows">
+          <div><div class="sh"><span class="sn">Swift</span><span class="sl">95%</span></div><div class="sbar"><div class="sfill" data-width="95"></div></div></div>
+          <div><div class="sh"><span class="sn">MVVM / MVVM-C</span><span class="sl">90%</span></div><div class="sbar"><div class="sfill" data-width="90"></div></div></div>
+          <div><div class="sh"><span class="sn">REST API Integration</span><span class="sl">92%</span></div><div class="sbar"><div class="sfill" data-width="92"></div></div></div>
+          <div><div class="sh"><span class="sn">JSON Parsing</span><span class="sl">92%</span></div><div class="sbar"><div class="sfill" data-width="92"></div></div></div>
+          <div><div class="sh"><span class="sn">Objective-C (Basic)</span><span class="sl">50%</span></div><div class="sbar"><div class="sfill" data-width="50"></div></div></div>
+        </div>
+      </div>
+      <div class="skill-card reveal r2">
+        <div class="skill-card-icon">🛠️</div>
+        <div class="skill-card-title">Tools &amp; Integrations</div>
+        <div class="tag-cloud">
+          <span class="tc">Git / GitFlow</span><span class="tc">Firebase</span><span class="tc">Xcode</span><span class="tc">SPM</span><span class="tc">CocoaPods</span><span class="tc">MQTT</span><span class="tc">Real-time Data</span><span class="tc">Subscriptions</span><span class="tc">App Store</span><span class="tc">Kotlin Basic</span><span class="tc">Dart Basic</span>
+        </div>
+        <div style="margin-top:1.4rem">
+          <div class="skill-card-title" style="font-size:.7rem;margin-bottom:.7rem">Soft Skills</div>
+          <div class="tag-cloud">
+            <span class="tc">Team Collaboration</span><span class="tc">Quick Learner</span><span class="tc">Project Ownership</span><span class="tc">Problem Solving</span><span class="tc">Communication</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ EXPERIENCE ██ -->
+<section id="experience">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Battle History</div>
+    <h2 class="section-title reveal">Work <span>Experience</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-date">Nov 2022 — Present</div>
+        <div class="tl-role">iOS Developer</div>
+        <div class="tl-co">▶ MB Infoways — Ahmedabad, India</div>
+        <ul class="tl-bullets">
+          <li>Developed and maintained multiple production iOS apps across fintech, healthcare, streaming, and automotive sectors.</li>
+          <li>Built responsive and scalable mobile interfaces using SwiftUI and UIKit.</li>
+          <li>Implemented RESTful API integrations and handled complex data structures using JSON.</li>
+          <li>Integrated push notifications, real-time data updates, and MQTT-based live data streaming.</li>
+          <li>Managed in-app purchases and subscription systems within mobile applications.</li>
+          <li>Designed scalable project architectures using MVVM and MVVM-C patterns.</li>
+          <li>Worked closely with backend teams for seamless API communication and performance optimization.</li>
+          <li>Owned full UI implementation, API integration, debugging, and App Store deployment workflows.</li>
+        </ul>
+        <div class="tags"><span class="tag">Swift</span><span class="tag">SwiftUI</span><span class="tag">UIKit</span><span class="tag">MVVM-C</span><span class="tag">MQTT</span><span class="tag">Firebase</span><span class="tag">CoreData</span><span class="tag">IAP</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">May 2022 — Oct 2022</div>
+        <div class="tl-role">iOS Developer Intern</div>
+        <div class="tl-co">▶ MB Infoways — Ahmedabad, India</div>
+        <ul class="tl-bullets">
+          <li>Assisted in building production-ready iOS applications using Swift and UIKit.</li>
+          <li>Implemented UI components and integrated APIs under senior developer supervision.</li>
+          <li>Learned best practices for Git workflow, debugging, and code optimization.</li>
+          <li>Contributed to internal features and bug fixes across company projects.</li>
+        </ul>
+        <div class="tags"><span class="tag">Swift</span><span class="tag">UIKit</span><span class="tag">Git</span><span class="tag">REST APIs</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ PROJECTS ██ -->
+<section id="projects" style="background:rgba(6,4,22,.5)">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Apps Shipped</div>
+    <h2 class="section-title reveal">Key <span>Projects</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="proj-grid">
+
+      <div class="proj-card feat reveal">
+        <div class="proj-head">
+          <div><div class="proj-type">Fintech · S-Rank</div><div class="proj-name">EPIDI &amp; SymplX — Forex Trading</div></div>
+          <div class="proj-badge">FEATURED</div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-desc">Two forex trading applications with live market data and dual UI designs.</p>
+          <ul class="proj-bullets">
+            <li>Integrated live market data &amp; chart visualizations via MQTT streaming</li>
+            <li>Implemented real-time trading interface with two distinct UI designs</li>
+            <li>High-frequency data updates and order management</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">MQTT</span><span class="tag">Real-time APIs</span><span class="tag">Charts</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal r1">
+        <div class="proj-head"><div><div class="proj-type">Automotive · A-Rank</div><div class="proj-name">OYaar — Vehicle Reminder App</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Vehicle management system for insurance, service &amp; RTO renewal reminders.</p>
+          <ul class="proj-bullets">
+            <li>Push notification scheduling for renewal alerts</li>
+            <li>User data management and vehicle profile system</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">UIKit</span><span class="tag">Firebase</span><span class="tag">Push Notifications</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal r2">
+        <div class="proj-head"><div><div class="proj-type">Automotive · A-Rank</div><div class="proj-name">VahanYaar — Dealership Platform</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Mobile marketplace for vehicle dealers to list and showcase vehicles to clients.</p>
+          <ul class="proj-bullets">
+            <li>Listing management with advanced filters</li>
+            <li>Responsive UI with full REST API integration</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">REST APIs</span><span class="tag">UIKit</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-head"><div><div class="proj-type">Streaming · A-Rank</div><div class="proj-name">MON — Audio &amp; Podcast Streaming</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Reel-style audio streaming app where users swipe between podcast episodes.</p>
+          <ul class="proj-bullets">
+            <li>Smooth audio playback engine using AVFoundation</li>
+            <li>Dynamic content loading with swipe-to-next interface</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">SwiftUI</span><span class="tag">AVFoundation</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal r1">
+        <div class="proj-head"><div><div class="proj-type">Healthcare · A-Rank</div><div class="proj-name">Stavya — Hospital Appointments</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Healthcare app enabling patients to book and manage doctor appointments.</p>
+          <ul class="proj-bullets">
+            <li>Full appointment booking and management flow</li>
+            <li>Doctor discovery, profiles &amp; REST API integration</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">REST APIs</span><span class="tag">UIKit</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal r2">
+        <div class="proj-head"><div><div class="proj-type">Talent / HR · B-Rank</div><div class="proj-name">CNT — Talent Hiring Platform</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Platform connecting clients with talent, featuring real-time in-app chat.</p>
+          <ul class="proj-bullets">
+            <li>Real-time in-app chat using Firebase</li>
+            <li>Talent discovery and profile management</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">Firebase</span><span class="tag">UIKit</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-head"><div><div class="proj-type">Healthcare · B-Rank</div><div class="proj-name">BioMatrix — Medicine Management</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Medicine tracking system with offline-first storage using CoreData.</p>
+          <ul class="proj-bullets">
+            <li>Fully offline capable with CoreData persistence</li>
+            <li>Medicine schedules, reminders and inventory tracking</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">CoreData</span><span class="tag">UIKit</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+      <div class="proj-card reveal r1">
+        <div class="proj-head"><div><div class="proj-type">Engineering · B-Rank</div><div class="proj-name">DraftAir — Scientific Calculator</div></div></div>
+        <div class="proj-body">
+          <p class="proj-desc">Professional engineering utility for mass flow and pressure calculations.</p>
+          <ul class="proj-bullets">
+            <li>Complex scientific calculation engine built in Swift</li>
+            <li>Clean professional UI for industrial workflows</li>
+          </ul>
+          <div class="proj-stack"><span class="tag">Swift</span><span class="tag">UIKit</span></div>
+        </div>
+        <div class="proj-foot"><span class="proj-link">⬡ Production App</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ EDUCATION ██ -->
+<section id="education">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Knowledge Gained</div>
+    <h2 class="section-title reveal">My <span>Education</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="edu-grid">
+      <!-- <div class="edu-card reveal">
+        <div class="edu-year">2021 — Present</div>
+        <div class="edu-degree">Master of Computer Applications (MCA)</div>
+        <div class="edu-school">▶ IGNOU</div>
+        <p class="edu-desc">Currently pursuing a postgraduate degree in computer applications, deepening expertise in advanced software engineering, algorithms, system design, and mobile computing.</p>
+        <div class="edu-badge">Currently Pursuing</div>
+      </div> -->
+      <div class="edu-card reveal r1">
+        <div class="edu-year">2018 — 2021</div>
+        <div class="edu-degree">Bachelor of Computer Applications (BCA)</div>
+        <div class="edu-school">▶ Silver Oak University — Ahmedabad, India</div>
+        <p class="edu-desc">Comprehensive undergraduate program covering programming fundamentals, mobile development, databases, networking, and software engineering. Graduated with outstanding academic performance.</p>
+        <div class="edu-badge">CGPA: 9.54 / 10 ⭐</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ HIGHLIGHTS ██ -->
+<section id="highlights" style="background:rgba(6,4,22,.5)">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">S-Rank Traits</div>
+    <h2 class="section-title reveal">Key <span>Highlights</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="hi-grid">
+      <div class="hi-card reveal"><div class="hi-icon">📱</div><div class="hi-title">4+ Years iOS Experience</div><p class="hi-desc">Professional mobile development since 2022, full lifecycle from concept to App Store deployment</p></div>
+      <div class="hi-card reveal r1"><div class="hi-icon">🏭</div><div class="hi-title">Multi-Domain Expertise</div><p class="hi-desc">Production apps shipped across fintech, healthcare, streaming, and automotive sectors</p></div>
+      <div class="hi-card reveal r2"><div class="hi-icon">📡</div><div class="hi-title">Real-Time MQTT Systems</div><p class="hi-desc">Expert integration of MQTT streaming, live forex data, and high-frequency trading interfaces</p></div>
+      <div class="hi-card reveal"><div class="hi-icon">🏗️</div><div class="hi-title">MVVM-C Architecture</div><p class="hi-desc">Deep expertise in MVVM and MVVM-C design patterns for scalable, maintainable iOS codebases</p></div>
+      <div class="hi-card reveal r1"><div class="hi-icon">🎓</div><div class="hi-title">Academic Excellence</div><p class="hi-desc">BCA graduate from Silver Oak University with an outstanding CGPA of 9.54 / 10</p></div>
+      <div class="hi-card reveal r2"><div class="hi-icon">⚙️</div><div class="hi-title">Full Lifecycle Ownership</div><p class="hi-desc">UI design, API integration, debugging, in-app purchases, and App Store deployment — all owned</p></div>
+    </div>
+  </div>
+</section>
+<div class="glow-divider"></div>
+
+<!-- ██ CONTACT ██ -->
+<section id="contact">
+  <div class="section-wrapper">
+    <div class="section-tag reveal">Open a Gate</div>
+    <h2 class="section-title reveal">Contact <span>Me</span></h2>
+    <div class="section-divider reveal"></div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <h3 class="ci-title">▶ Let's Connect</h3>
+        <p class="ci-text">Looking for a dedicated iOS developer who delivers production-grade apps on time? Whether it's a new project, a team collaboration, or a job opportunity — I'm ready to respond.</p>
+        <div class="ci-links">
+          <a href="mailto:lalitverma3313@gmail.com" class="ci-link">
+            <span class="ci-icon">✉</span><div><div class="ci-main">Email</div><div class="ci-sub">lalitverma3313@gmail.com</div></div>
+          </a>
+          <a href="tel:+918160818138" class="ci-link">
+            <span class="ci-icon">📞</span><div><div class="ci-main">Phone</div><div class="ci-sub">+91-8160818138</div></div>
+          </a>
+          <a href="https://linkedin.com/in/lalit-verma-b56698233" target="_blank" class="ci-link">
+            <span class="ci-icon">🔗</span><div><div class="ci-main">LinkedIn</div><div class="ci-sub">linkedin.com/in/lalit-verma-b56698233</div></div>
+          </a>
+          <a href="https://github.com/LalitZS" target="_blank" class="ci-link">
+            <span class="ci-icon">⬡</span><div><div class="ci-main">GitHub</div><div class="ci-sub">github.com/LalitZS</div></div>
+          </a>
+        </div>
+      </div>
+      <div class="reveal r1">
+        <form class="cform" id="contactForm">
+          <div class="frow">
+            <div class="fg"><label class="flabel" for="firstName">First Name *</label><input class="finput" type="text" id="firstName" placeholder="Your first name" required></div>
+            <div class="fg"><label class="flabel" for="lastName">Last Name</label><input class="finput" type="text" id="lastName" placeholder="Your last name"></div>
+          </div>
+          <div class="fg"><label class="flabel" for="email">Email *</label><input class="finput" type="email" id="email" placeholder="your@email.com" required></div>
+          <div class="fg"><label class="flabel" for="phone">Phone</label><input class="finput" type="tel" id="phone" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="fg"><label class="flabel" for="subject">Subject</label><input class="finput" type="text" id="subject" placeholder="Job opportunity, project, collaboration..."></div>
+          <div class="fg"><label class="flabel" for="message">Message *</label><textarea class="ftextarea" id="message" placeholder="Tell me about your opportunity or project..." required></textarea></div>
+          <div id="fstatus" class="fstatus"></div>
+          <button type="submit" class="btn-p" id="submitBtn" style="width:100%;justify-content:center">⬡ Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">Lalit R. Verma</div>
+  <p class="foot-text">iOS Developer · <span>MB Infoways, Ahmedabad</span> · India · © 2026</p>
+  <p style="margin-top:.5rem;font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--text-dim)">Swift · SwiftUI · UIKit · MVVM-C · Firebase · MQTT · CoreData · AVFoundation</p>
+</footer>
+
+<script>
+// CURSOR
+const dot=document.getElementById('cursorDot'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px'});
+(function ar(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar)})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='var(--gold)'});
+  el.addEventListener('mouseleave',()=>{ring.style.width='30px';ring.style.height='30px';ring.style.borderColor='var(--purple-glow)'});
+});
+
+// SCROLL PROGRESS
+window.addEventListener('scroll',()=>{document.getElementById('scrollProgress').style.transform=`scaleX(${window.scrollY/(document.body.scrollHeight-window.innerHeight)})`});
+
+// PARTICLES
+const canvas=document.getElementById('particles-canvas'),ctx=canvas.getContext('2d');
+function rc(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}rc();window.addEventListener('resize',rc);
+class P{
+  constructor(){this.reset()}
+  reset(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.vx=(Math.random()-.5)*.3;this.vy=(Math.random()-.5)*.3-.15;this.a=Math.random()*.32+.05;this.s=Math.random()*1.7+.4;this.c=Math.random()>.7?`rgba(240,180,41,${this.a})`:`rgba(107,53,212,${this.a})`}
+  update(){this.x+=this.vx;this.y+=this.vy;this.a-=.0004;if(this.y<-10||this.a<=0)this.reset()}
+  draw(){ctx.save();ctx.globalAlpha=this.a;ctx.fillStyle=this.c;ctx.shadowBlur=5;ctx.shadowColor=this.c;ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fill();ctx.restore()}
+}
+const ps=[];for(let i=0;i<100;i++)ps.push(new P());
+(function ap(){ctx.clearRect(0,0,canvas.width,canvas.height);ps.forEach(p=>{p.update();p.draw()});for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<80){ctx.save();ctx.globalAlpha=(1-d/80)*.07;ctx.strokeStyle='rgba(107,53,212,.5)';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.stroke();ctx.restore()}}requestAnimationFrame(ap)})();
+
+// REVEAL + SKILL BARS
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');e.target.querySelectorAll('.sfill').forEach(b=>{setTimeout(()=>{b.style.width=b.dataset.width+'%'},250)})}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// COUNT UP
+const co=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,target=parseInt(el.dataset.count),suf=el.dataset.suffix!==undefined?el.dataset.suffix:'+';let cur=0;const t=setInterval(()=>{cur=Math.min(cur+target/60,target);el.textContent=Math.floor(cur)+suf;if(cur>=target)clearInterval(t)},28);co.unobserve(el)})},{threshold:.5});
+document.querySelectorAll('.stat-number').forEach(el=>co.observe(el));
+
+// MOBILE NAV
+document.getElementById('navToggle').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('open'));
+function closeMobile(){document.getElementById('mobileMenu').classList.remove('open')}
+
+// TYPING EFFECT
+(function(){
+  const titles=['Swift Engineer','SwiftUI Specialist','MVVM Architect','iOS Developer'];
+  const el=document.getElementById('typedText');if(!el)return;
+  let ti=0,ci=0,del=false;
+  function t(){const cur=titles[ti];if(!del&&ci<=cur.length){el.textContent=cur.substring(0,ci);ci++;setTimeout(t,80)}else if(del&&ci>=0){el.textContent=cur.substring(0,ci);ci--;setTimeout(t,40)}else if(!del&&ci>cur.length){del=true;setTimeout(t,2200)}else{del=false;ti=(ti+1)%titles.length;ci=0;setTimeout(t,300)}}
+  setTimeout(t,1800);
+})();
+
+// CONTACT FORM — sends email to Lalit with visitor's details
+document.getElementById('contactForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn'),st=document.getElementById('fstatus');
+  const fn=document.getElementById('firstName').value.trim();
+  const ln=document.getElementById('lastName').value.trim();
+  const em=document.getElementById('email').value.trim();
+  const ph=document.getElementById('phone').value.trim();
+  const sb=document.getElementById('subject').value.trim();
+  const ms=document.getElementById('message').value.trim();
+  if(!fn||!em||!ms){st.className='fstatus err';st.textContent='⚠ Please fill Name, Email, and Message.';return}
+  btn.textContent='⬡ Opening Mail...';btn.disabled=true;
+  st.className='fstatus wait';st.textContent='⟳ Preparing message...';
+  const body=`Name: ${fn} ${ln}%0D%0AEmail: ${em}%0D%0APhone: ${ph||'Not provided'}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(ms)}`;
+  window.location.href=`mailto:lalitverma3313@gmail.com?subject=${encodeURIComponent(sb||'Portfolio Contact — '+fn)}&body=${body}`;
+  setTimeout(()=>{st.className='fstatus ok';st.textContent='✦ Mail client opened! Complete sending from your email app.';btn.textContent='⬡ Send Message';btn.disabled=false;this.reset()},1500);
+});
+</script>
+</body>
+</html>

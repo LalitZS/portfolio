@@ -21,6 +21,9 @@
   ::-webkit-scrollbar-track{background:var(--bg-void)}
   ::-webkit-scrollbar-thumb{background:var(--purple-bright);border-radius:2px}
 
+  @keyframes loaderFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes loaderExit{0%{opacity:1;transform:scale(1)}60%{opacity:1;transform:scale(1.03)}100%{opacity:0;transform:scale(1.06);pointer-events:none}}
+  
   .cursor-dot{width:8px;height:8px;background:var(--purple-glow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--purple-glow),0 0 20px var(--purple-glow)}
   .cursor-ring{width:30px;height:30px;border:1px solid var(--purple-glow);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:all .15s ease;opacity:.7}
   #particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
@@ -206,6 +209,46 @@
 </head>
 <body>
 
+<div id="loader" style="position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#02010a;overflow:hidden;">
+
+  <!-- BG IMAGE — replace img.jpeg with your image filename -->
+  <div style="position:absolute;inset:0;background:url('img1.jpeg') center/cover no-repeat;filter:brightness(.55) saturate(1.2);"></div>
+
+  <!-- Vignette (hides text in corners of image) -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 30%,rgba(2,1,10,.85) 100%)"></div>
+
+  <!-- Scanlines -->
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);pointer-events:none"></div>
+
+  <!-- Center card -->
+  <div style="position:relative;z-index:2;text-align:center;width:90%;max-width:540px">
+    <div style="border:1px solid rgba(107,53,212,.5);background:rgba(2,1,10,.7);backdrop-filter:blur(10px);padding:2.5rem 2rem 2rem;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px));animation:loaderFadeIn .6s ease forwards;">
+
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:6px;color:rgba(240,180,41,.8);text-transform:uppercase;margin-bottom:1.2rem;">[ SYSTEM AWAKENING ]</div>
+
+      <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(1.6rem,5vw,2.8rem);font-weight:900;background:linear-gradient(135deg,#fff 0%,#9b59f5 40%,#f0b429 80%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(107,53,212,.7));margin-bottom:.4rem;">Lalit R. Verma</div>
+
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:4px;color:#9b59f5;text-transform:uppercase;margin-bottom:2rem;">iOS Developer · S-Rank Engineer</div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:.6rem;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:3px;color:rgba(155,89,245,.7)">INITIALIZING PORTFOLIO...</span>
+        <span id="loader-pct" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:#f0b429">0%</span>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="height:4px;background:rgba(107,53,212,.18);position:relative;overflow:visible;">
+        <div id="loader-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#3d1f8a,#9b59f5,#f0b429);box-shadow:0 0 14px #9b59f5,0 0 30px rgba(107,53,212,.5);transition:width .05s linear;position:relative;">
+          <div style="position:absolute;right:-2px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#f0b429;border-radius:50%;box-shadow:0 0 10px #f0b429,0 0 20px #f0b429"></div>
+        </div>
+      </div>
+
+      <div id="loader-status" style="font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:2px;color:rgba(107,53,212,.6);margin-top:.8rem;text-align:left;min-height:1rem;">▸ Loading shadow energy...</div>
+    </div>
+
+    <div style="margin-top:1.5rem;font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:4px;color:rgba(107,53,212,.35);">[ arise and conquer ]</div>
+  </div>
+</div>
+  
 <canvas id="particles-canvas"></canvas>
 <div class="scan-line"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -665,5 +708,40 @@ document.getElementById('contactForm').addEventListener('submit',function(e){
   setTimeout(()=>{st.className='fstatus ok';st.textContent='✦ Mail client opened! Complete sending from your email app.';btn.textContent='⬡ Send Message';btn.disabled=false;this.reset()},1500);
 });
 </script>
+
+  <script>
+(function(){
+  var statuses=['▸ Loading shadow energy...','▸ Awakening the system...','▸ Importing Swift modules...','▸ Initializing MVVM architecture...','▸ Connecting to Firebase...','▸ Calibrating MQTT streams...','▸ Loading project dungeons...','▸ Summoning the shadow army...','▸ Arise.'];
+  var bar=document.getElementById('loader-bar');
+  var pct=document.getElementById('loader-pct');
+  var status=document.getElementById('loader-status');
+  var loader=document.getElementById('loader');
+  var current=0,target=0;
+
+  function animateBar(){
+    if(current<target) current=Math.min(current+.8,target);
+    bar.style.width=current+'%';
+    pct.textContent=Math.floor(current)+'%';
+    if(current<100) requestAnimationFrame(animateBar);
+    else setTimeout(exitLoader,300);
+  }
+
+  [8,15,22,30,42,55,68,78,88,100].forEach(function(s,i){
+    setTimeout(function(){
+      target=s;
+      if(statuses[i]) status.textContent=statuses[i];
+      if(i===0) animateBar();
+    },[200,400,600,850,1100,1400,1700,2000,2300,2700][i]);
+  });
+
+  function exitLoader(){
+    loader.style.animation='loaderExit .7s ease forwards';
+    setTimeout(function(){ loader.style.display='none'; document.body.style.overflow=''; },700);
+  }
+
+  document.body.style.overflow='hidden';
+})();
+</script>
+  
 </body>
 </html>
